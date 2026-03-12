@@ -696,8 +696,8 @@ function Testimonials() {
   const testimonials = [
     {
       id: 1,
-      name: "~Mandeep",
-      quote: "Hey stranger(sissy),I feel to order for my self and I didn’t expect this much good you wrote it for me.After reading this I understand that you are good in writing something by imagining.Letter and words chala Bagunnay, Thank you 🥰.",
+      name: "~Meva",
+      quote: "Those writings literally means a lot. I valued it a lot but was never able to express it. Every word that you wrote were on point to my feelings towards them. I didn't expect to it be such precise. Thank you so much...",
       image: testimonial1,
       rotation: "-rotate-2"
     },
@@ -710,8 +710,8 @@ function Testimonials() {
     },
     {
       id: 3,
-      name: "K. V.",
-      quote: "Such a unique and thoughtful service. The packaging with the potli bag and the beautiful handwriting made it feel like a treasure from the past.",
+      name: "~Rihiya",
+      quote: "Thank you so much for your writing raa 🥰. It felt me very happy and emotional 🥹. literally i cried after reading the word's.It was very good❣️and fantastic. Once again thank you so much 🥰🥰.....",
       image: testimonial3,
       rotation: "-rotate-1"
     }
