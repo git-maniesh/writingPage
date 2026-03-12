@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
-import { Feather, Heart, Mail, PenTool, Send, Instagram, Flower2, Leaf, Quote, Play, Sparkles, ArrowUp, Volume2, VolumeX } from 'lucide-react';
+import { Feather, Heart, Mail, PenTool, Send, Instagram, Flower2, Leaf, Quote, Play, Sparkles, ArrowUp, Volume2, VolumeX, Menu, X } from 'lucide-react';
 import { useState, FormEvent, useEffect, ChangeEvent, FocusEvent, useRef, createContext, useContext, useCallback, ReactNode } from 'react';
 
 // Import local assets
@@ -125,7 +125,7 @@ export function SoundProvider({ children }: { children: ReactNode }) {
 
 function SoundToggle() {
   const { isMuted, toggleMute, playClick, playHover } = useSound();
-  
+
   return (
     <button
       onClick={() => {
@@ -197,12 +197,12 @@ function AnimatedInkBlots() {
           <motion.div
             key={blot.id}
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
+            animate={{
               opacity: [0, blot.maxOpacity, blot.maxOpacity, 0],
               scale: [0.8, 1, 1.05, 1.1]
             }}
             exit={{ opacity: 0 }}
-            transition={{ 
+            transition={{
               duration: blot.duration,
               ease: "easeInOut",
               times: [0, 0.2, 0.8, 1]
@@ -230,7 +230,7 @@ function AnimatedInkBlots() {
 function AppContent() {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-  
+
   // Parallax layers for immersive vintage feel
   const yBgSlow = useTransform(scrollYProgress, [0, 1], ['0%', '15%']);
   const yBgFast = useTransform(scrollYProgress, [0, 1], ['0%', '-20%']);
@@ -250,30 +250,31 @@ function AppContent() {
   return (
     <div className="min-h-screen relative overflow-hidden selection:bg-[#a85c3c] selection:text-[#f7f3ea]">
       <CustomCursor />
-      <AnimatedInkBlots />
-      <PaperTransition 
-        state={transitionState} 
-        targetId={targetId} 
-        onStateChange={setTransitionState} 
-        onTargetChange={setTargetId} 
+      {/* AnimatedInkBlots disabled to improve performance on large screens / reduce lag */}
+      {/* <AnimatedInkBlots /> */}
+      <PaperTransition
+        state={transitionState}
+        targetId={targetId}
+        onStateChange={setTransitionState}
+        onTargetChange={setTargetId}
       />
       {/* Base paper texture overlay - Parallaxed */}
-      <motion.div 
+      <motion.div
         style={{ y: yBgSlow }}
-        animate={{ 
+        animate={{
           opacity: [0.12, 0.15, 0.12],
           scale: [1, 1.01, 1]
         }}
-        transition={{ 
-          duration: 15, 
-          ease: "easeInOut", 
-          repeat: Infinity 
+        transition={{
+          duration: 15,
+          ease: "easeInOut",
+          repeat: Infinity
         }}
         className="fixed inset-[-50%] pointer-events-none mix-blend-color-burn bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')] z-50"
       ></motion.div>
 
       {/* Secondary Vintage Texture Layer (Dust/Scratches) */}
-      <motion.div 
+      <motion.div
         style={{ y: yBgFast }}
         className="fixed inset-[-50%] pointer-events-none opacity-[0.06] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/stucco.png')] z-40"
       ></motion.div>
@@ -288,7 +289,7 @@ function AppContent() {
       <motion.div style={{ y: yDecor3 }} className="fixed top-[85%] left-[5%] text-[#a85c3c]/5 pointer-events-none z-0 rotate-[-45deg]">
         <Heart className="w-96 h-96" strokeWidth={0.5} />
       </motion.div>
-      
+
       {/* Enhanced vignette for burnt/aged edge effect */}
       <div className="fixed inset-0 pointer-events-none z-50 mix-blend-multiply" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(140, 58, 58, 0.03) 70%, rgba(44, 36, 33, 0.25) 100%)' }}></div>
 
@@ -296,7 +297,7 @@ function AppContent() {
       <VintageInkBlots />
 
       <Navbar onNavigate={handleNavigate} />
-      
+
       <main>
         <Hero y={y} onNavigate={handleNavigate} />
         <Services />
@@ -322,19 +323,56 @@ export default function App() {
 
 function Navbar({ onNavigate }: { onNavigate: (id: string) => void }) {
   const { playHover, playClick } = useSound();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const toggleMenu = () => setMenuOpen(!menuOpen);
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 px-6 py-4 flex justify-between items-center bg-[#f7f3ea]/80 backdrop-blur-md border-b border-[#2c2421]/10">
       <a href="#" onClick={(e) => { e.preventDefault(); playClick(); onNavigate('#root'); }} onMouseEnter={playHover} className="flex items-center gap-2 text-[#2c2421]">
         <Feather className="w-5 h-5" />
         <span className="font-handwriting text-2xl font-semibold tracking-wide">Love Beyond Writings</span>
       </a>
-       <span className="font-handwriting text-2xl font-semibold tracking-wide">#LBWritings</span>
-
-      <div className="flex gap-6 text-sm font-mono tracking-widest uppercase text-[#5c4e46]">
+      <span className="font-handwriting text-2xl font-semibold tracking-wide hidden md:inline">#LBWritings</span>
+      {/* Desktop menu */}
+      <div className="hidden md:flex gap-6 text-sm font-mono tracking-widest uppercase text-[#5c4e46]">
         <a href="#services" onClick={(e) => { e.preventDefault(); playClick(); onNavigate('#services'); }} onMouseEnter={playHover} className="relative after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#a85c3c] hover:text-[#a85c3c] transition-colors">Services</a>
         <a href="#portfolio" onClick={(e) => { e.preventDefault(); playClick(); onNavigate('#portfolio'); }} onMouseEnter={playHover} className="relative after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#a85c3c] hover:text-[#a85c3c] transition-colors">Letters</a>
         <a href="#order" onClick={(e) => { e.preventDefault(); playClick(); onNavigate('#order'); }} onMouseEnter={playHover} className="relative after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#a85c3c] hover:text-[#a85c3c] transition-colors">Order</a>
       </div>
+      {/* Mobile hamburger */}
+      <button onClick={toggleMenu} className="md:hidden flex items-center text-[#2c2421] z-50" aria-label="Toggle menu" onMouseEnter={playHover}>
+        {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+      </button>
+
+      {/* Mobile slide‑out menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 min-h-screen bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')] bg-[#ede6d8]/95 backdrop-blur-md flex flex-col items-center justify-center z-40 md:hidden"
+          >
+            {/* Vintage Decor */}
+            <div className="absolute top-10 left-10 text-[#8c3a3a]/10 rotate-[-15deg]">
+              <Flower2 className="w-32 h-32" strokeWidth={0.5} />
+            </div>
+            <div className="absolute bottom-10 right-10 text-[#5c4e46]/10 rotate-[25deg]">
+              <Leaf className="w-40 h-40" strokeWidth={0.5} />
+            </div>
+
+            <div className="flex flex-col gap-10 text-center relative z-10">
+              <a href="#services" onClick={(e) => { e.preventDefault(); playClick(); onNavigate('#services'); setMenuOpen(false); }} onMouseEnter={playHover} className="text-3xl font-serif italic text-[#2c2421] relative after:absolute after:-bottom-2 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#a85c3c] hover:text-[#a85c3c] transition-colors">Services</a>
+              <a href="#portfolio" onClick={(e) => { e.preventDefault(); playClick(); onNavigate('#portfolio'); setMenuOpen(false); }} onMouseEnter={playHover} className="text-3xl font-serif italic text-[#2c2421] relative after:absolute after:-bottom-2 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#a85c3c] hover:text-[#a85c3c] transition-colors">Letters</a>
+              <a href="#order" onClick={(e) => { e.preventDefault(); playClick(); onNavigate('#order'); setMenuOpen(false); }} onMouseEnter={playHover} className="text-3xl font-serif italic text-[#2c2421] relative after:absolute after:-bottom-2 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#a85c3c] hover:text-[#a85c3c] transition-colors">Order</a>
+            </div>
+
+            <a href="https://instagram.com/lovebeyondwritings" target="_blank" rel="noreferrer" onMouseEnter={playHover} onClick={playClick} className="absolute bottom-12 flex items-center gap-2 font-mono text-sm tracking-widest uppercase text-[#a85c3c] hover:text-[#2c2421] transition-colors duration-300 relative mt-16 after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#2c2421]">
+              <Instagram className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform duration-300" /> @lovebeyondwritings
+            </a>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
@@ -357,7 +395,7 @@ function Hero({ y, onNavigate }: { y: any, onNavigate: (id: string) => void }) {
           <div className="inline-block border-b border-[#a85c3c] pb-2 mb-4">
             <span className="font-vintage text-2xl text-[#a85c3c]">Handwritten with Love</span>
           </div>
-          
+
           <h1 className="text-6xl md:text-8xl font-serif font-bold text-[#2c2421] leading-tight tracking-tight relative">
             <div className="opacity-0 pointer-events-none select-none" aria-hidden="true">
               Words that Stay <br />
@@ -372,25 +410,25 @@ function Hero({ y, onNavigate }: { y: any, onNavigate: (id: string) => void }) {
               </span>
             </div>
           </h1>
-          
+
           <div className="relative max-w-2xl mx-auto">
             <p className="text-lg md:text-xl font-serif  text-[#0e0101] font-bold leading-relaxed tracking-wide opacity-0 pointer-events-none select-none" aria-hidden="true">
               In a world of instant texts, bring back the beauty of meaningful letters. Get custom letters and heartfelt messages for your loved ones, parents, and special occasions. Crafted with vintage elegance.
             </p>
             <p className="text-lg md:text-xl font-serif  text-[#5c4e46] leading-relaxed tracking-wide absolute inset-0 text-center">
-              <Typewriter 
+              <Typewriter
                 text="In a world of instant texts, bring back the beauty of meaningful letters. 
-                Get custom letters and heartfelt messages for your loved ones, parents, and special occasions. Crafted with vintage elegance." 
+                Get custom letters and heartfelt messages for your loved ones, parents, and special occasions. Crafted with vintage elegance."
 
-                delay={800 + 24 * 60 + 300} 
-                speed={30} 
+                delay={800 + 24 * 60 + 300}
+                speed={30}
               />
             </p>
           </div>
 
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-6">
-            <motion.a 
-              href="#order" 
+            <motion.a
+              href="#order"
               onClick={(e) => { e.preventDefault(); playClick(); onNavigate('#order'); }}
               onMouseEnter={playHover}
               whileHover={{ scale: 1.02 }}
@@ -413,7 +451,7 @@ function Hero({ y, onNavigate }: { y: any, onNavigate: (id: string) => void }) {
       {/* Decorative floating papers */}
       <FloatingPaper delay={0} className="top-1/4 left-10 -rotate-12" />
       <FloatingPaper delay={2} className="bottom-1/4 right-10 rotate-6" />
-      
+
       <DecorativeStamp delay={0.5} />
     </section>
   );
@@ -492,7 +530,7 @@ function Services() {
             >
               {/* Fold effect */}
               <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-bl from-transparent via-transparent to-[#ede6d8] border-b border-l border-[#2c2421]/10 shadow-sm transition-all duration-500 group-hover:w-16 group-hover:h-16"></div>
-              
+
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
@@ -516,8 +554,8 @@ function Portfolio() {
     <section id="portfolio" className="py-32 px-6 relative overflow-hidden">
       <div className="max-w-4xl mx-auto text-center relative z-10">
         <h2 className="text-4xl md:text-5xl font-serif italic mb-16 text-[#2c2421]">A Glimpse of Love</h2>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: 60, rotate: -4, scale: 0.95 }}
           whileInView={{ opacity: 1, y: 0, rotate: -1, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -527,16 +565,16 @@ function Portfolio() {
           className="bg-[#f7f3ea] p-12 md:p-20 shadow-2xl border border-[#2c2421]/10 relative mx-auto transform -rotate-1 transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(44,36,33,0.15)]"
         >
           <div className="absolute top-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-[#ede6d8]/50 backdrop-blur-sm shadow-sm -rotate-2"></div>
-          
+
           <p className="font-handwriting text-3xl md:text-4xl leading-relaxed text-left text-[#2c2421]">
-            "My dearest,<br/><br/>
-            I sit here trying to find the words that could possibly encompass what you mean to me. It is like trying to capture the ocean in a teacup. Every day with you is a gentle unfolding of a beautiful story...<br/><br/>
+            "My dearest,<br /><br />
+            I sit here trying to find the words that could possibly encompass what you mean to me. It is like trying to capture the ocean in a teacup. Every day with you is a gentle unfolding of a beautiful story...<br /><br />
             Yours always."
           </p>
-          
+
           <div className="mt-12 flex justify-end">
             <div className="w-20 h-20 rounded-full border-2 border-[#8c3a3a] flex items-center justify-center opacity-80 rotate-12">
-              <span className="font-vintage text-[#8c3a3a] text-sm text-center leading-tight">Love<br/>Beyond</span>
+              <span className="font-vintage text-[#8c3a3a] text-sm text-center leading-tight">Love<br />Beyond</span>
             </div>
           </div>
         </motion.div>
@@ -547,26 +585,26 @@ function Portfolio() {
 
 function PaperSwirls() {
   const colors = ['bg-[#e8e2d5]', 'bg-[#a85c3c]', 'bg-[#2c2421]', 'bg-[#5c4e46]'];
-  
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       {[...Array(24)].map((_, i) => (
         <motion.div
           key={i}
-          initial={{ 
-            top: -50, 
-            left: `${Math.random() * 100}%`, 
+          initial={{
+            top: -50,
+            left: `${Math.random() * 100}%`,
             rotate: Math.random() * 360,
-            opacity: 0 
+            opacity: 0
           }}
-          animate={{ 
+          animate={{
             top: '120%',
             left: `${Math.random() * 100}%`,
             rotate: Math.random() * 720,
             opacity: [0, 0.7, 0.7, 0]
           }}
-          transition={{ 
-            duration: 6 + Math.random() * 6, 
+          transition={{
+            duration: 6 + Math.random() * 6,
             repeat: Infinity,
             delay: Math.random() * 5,
             ease: "linear"
@@ -595,17 +633,17 @@ function TestimonialCard({ testimonial, index, playHover }: { key?: number, test
       className={`relative bg-[#f7f3ea] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-[#2c2421]/5 transition-all duration-500 hover:shadow-[0_15px_40px_rgb(0,0,0,0.12)] ${index === 2 ? 'md:col-span-2 md:w-2/3 md:mx-auto' : ''}`}
     >
       {/* Decorative pin */}
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#8c3a3a] shadow-sm border border-[#5c4e46]/20 z-10">
+      <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-7 rounded-full bg-[#8c3a3a] shadow-sm border border-[#5c4e46]/20 z-10">
         <div className="absolute inset-1 rounded-full bg-white/30"></div>
       </div>
 
-      <div className="mb-6 relative aspect-[4/3] overflow-hidden border border-[#2c2421]/10 bg-[#ede6d8]">
+      <div className="mb-6 relative aspect-[4/5] overflow-hidden border border-[#2c2421]/10 bg-[#ede6d8]">
         <div className="absolute inset-0 bg-[#2c2421]/5 mix-blend-multiply z-10 pointer-events-none"></div>
-        
+
         {/* Loading Skeleton */}
         <AnimatePresence>
           {!imageLoaded && (
-            <motion.div 
+            <motion.div
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
               className="absolute inset-0 flex items-center justify-center bg-[#ede6d8] z-0"
@@ -615,9 +653,9 @@ function TestimonialCard({ testimonial, index, playHover }: { key?: number, test
           )}
         </AnimatePresence>
 
-        <img 
-          src={testimonial.image} 
-          alt={`Testimonial from ${testimonial.name}`} 
+        <img
+          src={testimonial.image}
+          alt={`Testimonial from ${testimonial.name}`}
           onLoad={() => setImageLoaded(true)}
           className={`w-full h-full object-cover sepia-[0.2] hover:sepia-0 transition-all duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
           referrerPolicy="no-referrer"
@@ -658,15 +696,15 @@ function Testimonials() {
   const testimonials = [
     {
       id: 1,
-      name: "S. M.",
-      quote: "The letter was absolutely beautiful. It brought tears to my mother's eyes. The vintage paper and the handwriting felt so personal and timeless.",
+      name: "~Mandeep",
+      quote: "Hey stranger(sissy),I feel to order for my self and I didn’t expect this much good you wrote it for me.After reading this I understand that you are good in writing something by imagining.Letter and words chala Bagunnay, Thank you 🥰.",
       image: testimonial1,
       rotation: "-rotate-2"
     },
     {
       id: 2,
-      name: "A. R.",
-      quote: "I commissioned a love letter for our anniversary, and it was the perfect gift. The attention to detail, from the wax seal to the dried flowers, was incredible.",
+      name: "~Mandeep",
+      quote: "Hey stranger(sissy),I feel to order for my self and I didn’t expect this much good you wrote it for me.After reading this I understand that you are good in writing something by imagining.Letter and words chala Bagunnay, Thank you 🥰.",
       image: testimonial2,
       rotation: "rotate-3"
     },
@@ -682,7 +720,7 @@ function Testimonials() {
   return (
     <section id="testimonials" className="py-32 px-6 relative z-10 bg-[#ede6d8]/80 border-y border-[#2c2421]/10">
       <div className="max-w-7xl mx-auto">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -700,7 +738,7 @@ function Testimonials() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Featured Video Section */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -710,17 +748,17 @@ function Testimonials() {
             <div className="relative aspect-[9/16] max-w-sm mx-auto bg-[#2c2421] p-3 shadow-[0_20px_50px_rgb(0,0,0,0.15)] -rotate-2 hover:rotate-0 transition-transform duration-700">
               {/* Decorative tape */}
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-white/40 backdrop-blur-sm rotate-2 z-20 shadow-sm border border-white/20 mix-blend-overlay"></div>
-              
+
               <div className="relative w-full h-full overflow-hidden border border-[#5c4e46]/30 group cursor-pointer" onClick={toggleVideo} onMouseEnter={playHover}>
-                <video 
+                <video
                   ref={videoRef}
-                  src={heroVideo} 
+                  src={heroVideo}
                   className="w-full h-full object-cover sepia-[0.3] group-hover:sepia-0 transition-all duration-700"
                   loop
                   muted
                   playsInline
                 />
-                
+
                 {/* Play button overlay */}
                 <div className={`absolute inset-0 bg-black/20 flex items-center justify-center transition-opacity duration-300 ${isPlaying ? 'opacity-0' : 'opacity-100 group-hover:bg-black/40'}`}>
                   <div className="w-16 h-16 rounded-full border-2 border-white/80 flex items-center justify-center backdrop-blur-sm transform group-hover:scale-110 transition-transform duration-300">
@@ -728,7 +766,7 @@ function Testimonials() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="absolute -bottom-6 -right-6 text-[#a85c3c] opacity-20 pointer-events-none">
                 <Flower2 className="w-32 h-32" />
               </div>
@@ -778,7 +816,7 @@ function EnvelopeForm({ children, submitted, onReset }: { children: ReactNode, s
         <div className="absolute inset-x-0 top-24 h-[400px] md:h-[500px]">
           {/* Envelope Back */}
           <div className="absolute inset-0 bg-[#d4c5b0] shadow-2xl rounded-sm"></div>
-          
+
           {/* Envelope Front Flaps */}
           <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden rounded-sm">
             <div className="absolute top-0 left-0 bottom-0 w-1/2 bg-[#e0d0bc] border-r border-[#2c2421]/5" style={{ clipPath: "polygon(0 0, 100% 50%, 0 100%)" }}></div>
@@ -797,7 +835,7 @@ function EnvelopeForm({ children, submitted, onReset }: { children: ReactNode, s
             style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }}
           >
             {/* Wax seal */}
-            <motion.div 
+            <motion.div
               variants={{
                 closed: { opacity: 1, scale: 1 },
                 open: { opacity: 0, scale: 1.5 }
@@ -823,7 +861,7 @@ function EnvelopeForm({ children, submitted, onReset }: { children: ReactNode, s
                   <Send className="w-12 h-12 text-[#8c3a3a] mx-auto mb-4" />
                   <h3 className="text-3xl font-serif italic mb-2">Sealed & Sent</h3>
                   <p className="font-mono text-sm tracking-widest text-[#5c4e46] mb-6">We will begin crafting your letter soon.</p>
-                  <button 
+                  <button
                     onClick={() => { playClick(); onReset(); setIsOpen(true); }}
                     onMouseEnter={playHover}
                     className="font-mono text-sm tracking-widest uppercase text-[#a85c3c] hover:text-[#2c2421] transition-colors duration-300 relative after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#2c2421]"
@@ -917,7 +955,7 @@ function OrderSection() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     playClick();
-    
+
     const newErrors: Record<string, string> = {};
     Object.keys(formData).forEach(key => {
       const error = validateField(key, formData[key as keyof typeof formData]);
@@ -930,13 +968,13 @@ function OrderSection() {
     if (Object.keys(newErrors).length > 0) return;
 
     setIsSubmitting(true);
-    
+
     try {
       const submitData = new FormData();
       submitData.append('access_key', import.meta.env.VITE_WEB3FORMS_ACCESS_KEY);
       submitData.append('subject', `New Letter Request from ${formData.name}`);
       submitData.append('from_name', 'Love Beyond Writings');
-      
+
       Object.entries(formData).forEach(([key, value]) => {
         submitData.append(key, value as string);
       });
@@ -947,7 +985,7 @@ function OrderSection() {
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         playTear();
         setSubmitted(true);
@@ -964,10 +1002,10 @@ function OrderSection() {
     }
   };
 
-  const getInputClass = (error: boolean | string | undefined) => 
+  const getInputClass = (error: boolean | string | undefined) =>
     `w-full bg-[#ede6d8]/80 px-4 pb-2 pt-6 border focus:outline-none font-serif text-lg transition-all duration-300 shadow-[inset_0_1px_4px_rgba(44,36,33,0.05)] ${error ? 'border-[#8c3a3a] focus:border-[#8c3a3a] focus:shadow-[0_0_0_1px_#8c3a3a,inset_0_1px_4px_rgba(44,36,33,0.05)]' : 'border-[#2c2421]/20 focus:border-[#2c2421] focus:shadow-[0_0_0_1px_#2c2421,inset_0_1px_4px_rgba(44,36,33,0.05)]'}`;
 
-  const getLabelClass = (isFocusedOrFilled: boolean) => 
+  const getLabelClass = (isFocusedOrFilled: boolean) =>
     `absolute left-4 font-mono tracking-widest uppercase transition-all duration-300 pointer-events-none z-10 ${isFocusedOrFilled ? 'top-2 text-[10px] text-[#a85c3c]' : 'top-[18px] text-sm text-[#5c4e46]'}`;
 
   const noiseTexture = `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E")`;
@@ -992,8 +1030,8 @@ function OrderSection() {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="relative">
                 <label className={getLabelClass(focusedField === 'name' || !!formData.name)}>Your Name</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
@@ -1006,8 +1044,8 @@ function OrderSection() {
               </div>
               <div className="relative">
                 <label className={getLabelClass(focusedField === 'email' || !!formData.email)}>Your Email</label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -1023,8 +1061,8 @@ function OrderSection() {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="relative">
                 <label className={getLabelClass(focusedField === 'phone' || !!formData.phone)}>Phone Number</label>
-                <input 
-                  type="tel" 
+                <input
+                  type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
@@ -1037,8 +1075,8 @@ function OrderSection() {
               </div>
               <div className="relative">
                 <label className={getLabelClass(focusedField === 'instagram' || !!formData.instagram)}>Instagram Handle (Optional)</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="instagram"
                   value={formData.instagram}
                   onChange={handleChange}
@@ -1052,7 +1090,7 @@ function OrderSection() {
 
             <div className="relative">
               <label className={getLabelClass(focusedField === 'occasion' || !!formData.occasion)}>Occasion</label>
-              <select 
+              <select
                 name="occasion"
                 value={formData.occasion}
                 onChange={handleChange}
@@ -1073,13 +1111,13 @@ function OrderSection() {
 
             <div className="relative">
               <label className={getLabelClass(focusedField === 'details' || !!formData.details)}>Key Details / Message</label>
-              <textarea 
+              <textarea
                 name="details"
                 value={formData.details}
                 onChange={handleChange}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-                rows={4} 
+                rows={4}
                 className={`${getInputClass(errors.details && touched.details)} resize-none`}
                 style={{ backgroundImage: noiseTexture }}
               ></textarea>
@@ -1087,8 +1125,8 @@ function OrderSection() {
             </div>
 
             <div className="pt-6 text-center">
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isSubmitting}
                 onMouseEnter={playHover}
                 className="group relative px-12 py-4 bg-[#2c2421] text-[#f7f3ea] font-mono text-sm tracking-widest uppercase overflow-hidden transition-all duration-500 hover:bg-[#1a1513] hover:shadow-[0_0_20px_rgba(44,36,33,0.4)] active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none flex items-center justify-center gap-2 mx-auto"
@@ -1116,7 +1154,7 @@ function Footer() {
           <Feather className="w-5 h-5 text-[#a85c3c]" />
           <span className="font-handwriting text-2xl">Love Beyond Writings</span>
         </div>
-        
+
         <div className="flex gap-6 font-mono text-xs tracking-widest uppercase text-[#a85c3c]">
           <a href="https://instagram.com/lovebeyondwritings" target="_blank" rel="noreferrer" onMouseEnter={playHover} onClick={playClick} className="group hover:text-[#f7f3ea] transition-colors duration-300 flex items-center gap-2 relative after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#f7f3ea]">
             <Instagram className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" /> Instagram
@@ -1143,7 +1181,7 @@ function DecorativeStamp({ delay = 0, light = false }: { delay?: number, light?:
     const top = `${Math.floor(Math.random() * 60) + 15}%`;
     const left = `${Math.floor(Math.random() * 70) + 15}%`;
     const rotate = Math.floor(Math.random() * 60) - 30; // -30 to +30 degrees
-    
+
     setStyle({ top, left, rotate });
   }, []);
 
@@ -1164,7 +1202,7 @@ function DecorativeStamp({ delay = 0, light = false }: { delay?: number, light?:
             <img src="/logo.jpg" alt="LBW Logo" className="w-full h-full object-cover z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
             <Heart className="w-5 h-5 absolute z-0 text-[#8c3a3a]" />
           </div>
-          <span className="font-vintage text-sm leading-none text-center">LoveBeyond<br/>Writings</span>
+          <span className="font-vintage text-sm leading-none text-center">LoveBeyond<br />Writings</span>
           <span className="font-mono text-[8px] tracking-[0.3em] mt-1">#LBW</span>
         </div>
       </div>
@@ -1178,7 +1216,7 @@ function Typewriter({ text, delay = 0, speed = 50, className = "" }: { text: str
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     let i = 0;
-    
+
     const startTyping = () => {
       const typeChar = () => {
         if (i < text.length) {
@@ -1197,14 +1235,14 @@ function Typewriter({ text, delay = 0, speed = 50, className = "" }: { text: str
   return <span className={className}>{displayedText}</span>;
 }
 
-function PaperTransition({ 
-  state, 
-  targetId, 
-  onStateChange, 
-  onTargetChange 
-}: { 
-  state: 'idle' | 'dropping' | 'leaving', 
-  targetId: string | null, 
+function PaperTransition({
+  state,
+  targetId,
+  onStateChange,
+  onTargetChange
+}: {
+  state: 'idle' | 'dropping' | 'leaving',
+  targetId: string | null,
   onStateChange: (s: 'idle' | 'dropping' | 'leaving') => void,
   onTargetChange: (t: string | null) => void
 }) {
@@ -1237,7 +1275,7 @@ function PaperTransition({
         >
           {/* Noise texture */}
           <div className="absolute inset-0 opacity-30 mix-blend-multiply" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E")` }}></div>
-          
+
           {/* Torn Edge Top */}
           <svg className="absolute top-0 left-0 w-full h-12 text-[#e8dcc4] -translate-y-[99%] drop-shadow-md" preserveAspectRatio="none" viewBox="0 0 100 10">
             <polygon fill="currentColor" points="0,10 0,0 2,8 4,2 6,9 8,1 10,7 12,3 14,9 16,2 18,8 20,1 22,9 24,3 26,8 28,2 30,9 32,1 34,8 36,2 38,9 40,0 42,8 44,2 46,9 48,1 50,7 52,3 54,9 56,2 58,8 60,1 62,9 64,3 66,8 68,2 70,9 72,1 74,8 76,2 78,9 80,0 82,8 84,2 86,9 88,1 90,7 92,3 94,9 96,2 98,8 100,0 100,10" />
@@ -1252,7 +1290,7 @@ function PaperTransition({
           {/* Coffee Stain */}
           <div className="absolute top-[20%] right-[15%] w-32 h-32 border-4 border-[#8c3a3a]/10 rounded-full mix-blend-multiply filter blur-[1px]"></div>
           <div className="absolute top-[20%] right-[15%] w-28 h-28 border-2 border-[#8c3a3a]/15 rounded-full mix-blend-multiply filter blur-[0.5px] translate-x-2 translate-y-1"></div>
-          
+
           {/* Squiggle */}
           <svg className="absolute bottom-[25%] left-[15%] w-24 h-24 text-[#a85c3c]/30 -rotate-12" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
             <path d="M10,50 Q25,20 40,50 T70,50 T90,50" />
@@ -1275,7 +1313,7 @@ function PaperTransition({
           <div className="w-[80%] h-[80%] border border-[#a85c3c]/30 flex items-center justify-center relative z-10">
             <div className="absolute top-8 left-8 w-16 h-16 border-t border-l border-[#a85c3c]/40"></div>
             <div className="absolute bottom-8 right-8 w-16 h-16 border-b border-r border-[#a85c3c]/40"></div>
-            
+
             <div className="flex flex-col items-center gap-6">
               <Feather className="w-12 h-12 text-[#a85c3c]" />
               <span className="font-handwriting text-5xl md:text-7xl text-[#2c2421]">Turning the page...</span>
@@ -1354,12 +1392,12 @@ function FloatingDoodles() {
           <motion.div
             key={doodle.id}
             initial={{ opacity: 0, top: `${doodle.y}%`, left: `${doodle.x}%`, scale: 0, rotate: -20 }}
-            animate={{ 
-              opacity: [0, 0.3, 0], 
-              top: `${doodle.y - (doodle.type === 'heart' ? 10 : 0)}%`, 
-              left: `${doodle.x + (Math.random() * 4 - 2)}%`, 
-              scale: doodle.scale, 
-              rotate: 20 
+            animate={{
+              opacity: [0, 0.3, 0],
+              top: `${doodle.y - (doodle.type === 'heart' ? 10 : 0)}%`,
+              left: `${doodle.x + (Math.random() * 4 - 2)}%`,
+              scale: doodle.scale,
+              rotate: 20
             }}
             exit={{ opacity: 0 }}
             transition={{ duration: 5, ease: "easeInOut" }}
@@ -1403,17 +1441,17 @@ function VintageInkBlots() {
           <motion.div
             key={blot.id}
             initial={{ opacity: 0, scale: blot.scale * 0.8 }}
-            animate={{ 
+            animate={{
               opacity: [0, 0.12, 0], // Very subtle opacity
-              scale: blot.scale 
+              scale: blot.scale
             }}
             exit={{ opacity: 0 }}
             transition={{ duration: 12, ease: "easeInOut" }} // Slow fade in and out
             className="absolute text-[#2c2421]"
-            style={{ 
-              top: `${blot.y}%`, 
-              left: `${blot.x}%`, 
-              transform: `translate(-50%, -50%) rotate(${blot.rotation}deg)` 
+            style={{
+              top: `${blot.y}%`,
+              left: `${blot.x}%`,
+              transform: `translate(-50%, -50%) rotate(${blot.rotation}deg)`
             }}
           >
             {blot.type === 0 && (
@@ -1465,7 +1503,7 @@ function CustomCursor() {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isInteractive = 
+      const isInteractive =
         target.tagName.toLowerCase() === 'a' ||
         target.tagName.toLowerCase() === 'button' ||
         target.tagName.toLowerCase() === 'input' ||
@@ -1473,7 +1511,7 @@ function CustomCursor() {
         target.closest('a') ||
         target.closest('button') ||
         window.getComputedStyle(target).cursor === 'pointer';
-        
+
       setIsHovering(!!isInteractive);
     };
 
@@ -1518,9 +1556,9 @@ function CustomCursor() {
         }}
       >
         <div className="relative">
-          <Feather 
-            className={`w-6 h-6 transition-colors duration-300 drop-shadow-md ${isHovering ? 'text-[#8c3a3a]' : 'text-[#a85c3c]'}`} 
-            style={{ transform: 'rotate(90deg)' }} 
+          <Feather
+            className={`w-8 h-8 transition-colors duration-300 drop-shadow-md ${isHovering ? 'text-[#8c3a3a]' : 'text-[#a85c3c]'}`}
+            style={{ transform: 'rotate(90deg)' }}
           />
           <AnimatePresence>
             {isHovering && (
@@ -1579,11 +1617,11 @@ function BackToTop() {
         >
           {/* Vintage inner border */}
           <div className="absolute inset-1 border border-current opacity-20 pointer-events-none transition-opacity duration-500 group-hover:opacity-40"></div>
-          
+
           <div className="relative z-10 flex flex-col items-center justify-center">
             <ArrowUp className="w-5 h-5 transition-transform duration-500 group-hover:-translate-y-1" />
           </div>
-          
+
           {/* Subtle hover background effect */}
           <div className="absolute inset-0 bg-[#a85c3c] opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"></div>
         </motion.button>
