@@ -562,21 +562,13 @@ function Portfolio() {
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           whileHover={{ rotate: 0, scale: 1.02, transition: { duration: 0.6, ease: "easeOut" } }}
           onMouseEnter={playHover}
-          className="bg-[#f7f3ea] p-12 md:p-20 shadow-2xl border border-[#2c2421]/10 relative mx-auto transform -rotate-1 transition-shadow duration-500 hover:shadow-[0_20px_50px_rgba(44,36,33,0.15)]"
+          className="relative mx-auto mt-12 w-full px-4"
         >
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-[#ede6d8]/50 backdrop-blur-sm shadow-sm -rotate-2"></div>
-
-          <p className="font-handwriting text-3xl md:text-4xl leading-relaxed text-left text-[#2c2421]">
+          <InteractiveScroll text={<>
             "My dearest,<br /><br />
             I sit here trying to find the words that could possibly encompass what you mean to me. It is like trying to capture the ocean in a teacup. Every day with you is a gentle unfolding of a beautiful story...<br /><br />
             Yours always."
-          </p>
-
-          <div className="mt-12 flex justify-end">
-            <div className="w-20 h-20 rounded-full border-2 border-[#8c3a3a] flex items-center justify-center opacity-80 rotate-12">
-              <span className="font-vintage text-[#8c3a3a] text-sm text-center leading-tight">Love<br />Beyond</span>
-            </div>
-          </div>
+          </>} />
         </motion.div>
       </div>
     </section>
@@ -812,7 +804,6 @@ function EnvelopeForm({ children, submitted, onReset }: { children: ReactNode, s
         }}
         className="relative w-full max-w-3xl mx-auto perspective-1000"
       >
-        {/* Envelope Container */}
         <div className="absolute inset-x-0 top-24 h-[400px] md:h-[500px]">
           {/* Envelope Back */}
           <div className="absolute inset-0 bg-[#d4c5b0] shadow-2xl rounded-sm"></div>
@@ -1631,4 +1622,90 @@ function BackToTop() {
   );
 }
 
+function InteractiveScroll({ text }: { text: ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const { playTear, playHover } = useSound();
 
+  const handleOpen = () => {
+    if (!isOpen) {
+      playTear();
+      setIsOpen(true);
+    }
+  };
+
+  return (
+    <div className="relative max-w-2xl mx-auto perspective-1000 cursor-pointer group" onClick={handleOpen} onMouseEnter={playHover}>
+      {/* Container for the scroll */}
+      <motion.div
+        animate={{ 
+          height: isOpen ? 'auto' : '150px',
+          padding: isOpen ? '2rem 1rem' : '0rem',
+        }}
+        transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
+        className="relative bg-[#f7f3ea] shadow-2xl overflow-hidden flex flex-col justify-center items-center"
+      >
+        {/* Content of the letter */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 20 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="relative z-10 w-full"
+        >
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-8 bg-[#ede6d8]/80 backdrop-blur-sm shadow-sm -rotate-2 -mt-4 mb-4"></div>
+          <p className="font-handwriting text-3xl md:text-4xl leading-relaxed text-left text-[#2c2421] pt-6 px-4 md:px-12">
+            {text}
+          </p>
+          <div className="mt-12 flex justify-end px-4 md:px-12">
+            <div className="w-20 h-20 rounded-full border-2 border-[#8c3a3a] flex items-center justify-center opacity-80 rotate-12">
+              <span className="font-vintage text-[#8c3a3a] text-sm text-center leading-tight">Love<br />Beyond</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* --- Rolled State Visuals --- */}
+        <AnimatePresence>
+          {!isOpen && (
+             <motion.div 
+               exit={{ opacity: 0, scaleY: 0 }}
+               transition={{ duration: 0.5 }}
+               className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gradient-to-b from-[#e8dcc4] via-[#f7f3ea] to-[#e8dcc4] shadow-[inset_0_0_20px_rgba(44,36,33,0.1)] border-y-2 border-[#2c2421]/10"
+             >
+                {/* The rolled cylinder effect */}
+                <div className="absolute top-0 bottom-0 left-2 right-2 bg-gradient-to-r from-transparent via-[#f7f3ea]/60 to-transparent pointer-events-none opacity-50"></div>
+                
+                {/* Shadow lines simulating rolled paper ends */}
+                <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#2c2421]/30 to-transparent"></div>
+                <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#2c2421]/30 to-transparent"></div>
+
+                {/* The Rope */}
+                <motion.div 
+                   exit={{ width: "200%", opacity: 0 }} 
+                   transition={{ duration: 0.4, ease: "easeIn" }}
+                   className="absolute h-3 w-full bg-[#5c4e46] shadow-[0_4px_10px_rgba(0,0,0,0.5)] origin-center flex items-center justify-center"
+                >
+                   {/* Twine texture */}
+                   <div className="w-full h-[1px] bg-[#2c2421]/50 absolute top-[1px]"></div>
+                   <div className="w-full h-[1px] bg-[#2c2421]/50 absolute top-[3px]"></div>
+                   
+                   {/* The Knot / Seal */}
+                   <motion.div 
+                      exit={{ scale: 0, rotate: 180 }}
+                      className="w-14 h-14 rounded-full bg-[#8c3a3a] shadow-xl flex items-center justify-center border border-[#5c4e46]/20 absolute z-30 transform group-hover:scale-110 transition-transform duration-300"
+                   >
+                     <div className="w-11 h-11 rounded-full bg-[#8c3a3a] border-2 border-white/20 flex flex-col items-center justify-center">
+                        <span className="font-vintage text-xs text-white/90 leading-none">LB</span>
+                     </div>
+                   </motion.div>
+                </motion.div>
+                
+                <p className="mt-24 font-mono text-xs tracking-widest uppercase flex items-center gap-2 text-[#5c4e46]/80 group-hover:text-[#8c3a3a] transition-colors relative z-40 animate-pulse">
+                  <Play className="w-3 h-3" /> Click to Unfurl
+                </p>
+             </motion.div>
+          )}
+        </AnimatePresence>
+
+      </motion.div>
+    </div>
+  );
+}
