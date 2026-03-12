@@ -1157,9 +1157,10 @@ function Footer() {
 
         <div className="flex gap-6 font-mono text-xs tracking-widest uppercase text-[#a85c3c]">
           <a href="https://instagram.com/lovebeyondwritings" target="_blank" rel="noreferrer" onMouseEnter={playHover} onClick={playClick} className="group hover:text-[#f7f3ea] transition-colors duration-300 flex items-center gap-2 relative after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#f7f3ea]">
+
             <Instagram className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" /> Instagram
           </a>
-          <a href="mailto:hello@lovebeyondwritings.com" onMouseEnter={playHover} onClick={playClick} className="group hover:text-[#f7f3ea] transition-colors duration-300 flex items-center gap-2 relative after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#f7f3ea]">
+          <a href="mailto:lbwwritings@gmail.com" onMouseEnter={playHover} onClick={playClick} className="group hover:text-[#f7f3ea] transition-colors duration-300 flex items-center gap-2 relative after:absolute after:-bottom-1 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:duration-300 after:bg-[#f7f3ea]">
             <Mail className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" /> Email
           </a>
         </div>
